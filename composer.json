@@ -1,0 +1,18 @@
+{
+    "name": "matthewpoer/php-salesforce-wrapper",
+    "description": "A PHP wrapper for some common Lightning Platform REST API functions",
+    "version": "1.0",
+    "require": {
+        "educoder/pest": "dev-master",
+        "php": ">5.6"
+    },
+    "authors": [
+        {
+            "name": "Matthew Poer",
+            "email": "matthewpoer@gmail.com"
+        }
+    ],
+    "autoload": {
+        "files": ["php-salesforce-wrapper.php"]
+    }
+}
