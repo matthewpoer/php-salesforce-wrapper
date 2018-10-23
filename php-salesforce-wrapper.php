@@ -3,6 +3,7 @@ class php_sfdc_wrapper {
 
   private $pest = NULL;
   private $access_token = NULL;
+  const API_VERSION = '43.0';
 
   // invocation is authentication
   public function __construct(
@@ -46,7 +47,7 @@ class php_sfdc_wrapper {
     $query = 'select ' . implode(',',$fields) . ' from ' . $sObject . ' where ' . $where;
     try {
       $results = json_decode($this->pest->get(
-        '/services/data/v43.0/query/',
+        '/services/data/v' . self::API_VERSION . '/query/',
         array(
           'q' => $query
         ),
@@ -78,7 +79,7 @@ class php_sfdc_wrapper {
   public function create($sObject = '', $fields = array()) {
     try {
       $results = json_decode($this->pest->post(
-        '/services/data/v43.0/sobjects/' . $sObject . '/',
+        '/services/data/v' . self::API_VERSION . '/sobjects/' . $sObject . '/',
         json_encode($fields),
         array(
           'Authorization: Bearer ' . $this->access_token,
@@ -104,7 +105,7 @@ class php_sfdc_wrapper {
   public function update($sObject = '', $id = '', $fields = array()) {
     try {
       return json_decode($this->pest->patch(
-        '/services/data/v20.0/sobjects/' . $sObject . '/' . $id,
+        '/services/data/v' . self::API_VERSION . '/sobjects/' . $sObject . '/' . $id,
         json_encode($fields),
         array(
           'Authorization: Bearer ' . $this->access_token,
@@ -125,7 +126,7 @@ class php_sfdc_wrapper {
     $return = array();
     try {
       $all_results = json_decode($this->pest->get(
-        '/services/data/v20.0/sobjects/' . $sObject . '/describe',
+        '/services/data/v' . self::API_VERSION . '/sobjects/' . $sObject . '/describe',
         array(),
         array(
           'Authorization: Bearer ' . $this->access_token,
