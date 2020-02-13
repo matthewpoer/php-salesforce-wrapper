@@ -43,37 +43,45 @@ class php_sfdc_wrapper {
 
   }
 
-  public function query($sObject = '', $fields = array('Id'), $where = '', $require_result = TRUE) {
-    $query = 'select ' . implode(',',$fields) . ' from ' . $sObject . ' where ' . $where;
-    try {
-      $results = json_decode($this->pest->get(
-        '/services/data/v' . self::API_VERSION . '/query/',
-        array(
-          'q' => $query
-        ),
-        array(
-          'Authorization: Bearer ' . $this->access_token
-        )
-      ), TRUE);
-      if($require_result && empty($results['records'])) {
-        $message = 'Unable to find SFDC ' . $sObject . ' using query: ' . $query . PHP_EOL;
+  public function query($sObject = '', $fields = array('Id'), $where = NULL, $require_result = TRUE) {
+    $query = 'select ' . implode(',',$fields) . ' from ' . $sObject;
+    if(!empty($where)) {
+      $query .= ' where ' . $where;
+    }
+
+    $recordList = array();
+    $nextRecordsUrl = NULL;
+    $done = FALSE;
+    while(!$done) {
+      try {
+        $results = json_decode($this->pest->get(
+          empty($nextRecordsUrl) ? '/services/data/v' . self::API_VERSION . '/query/' : $nextRecordsUrl,
+          empty($nextRecordsUrl) ? array('q' => $query) : array(),
+          array(
+            'Authorization: Bearer ' . $this->access_token
+          )
+        ), TRUE);
+        if($require_result && empty($results['records'])) {
+          $message = 'Unable to find SFDC ' . $sObject . ' using query: ' . $query . PHP_EOL;
+          $message .= print_r($this->pest->last_request, TRUE);
+          throw new Exception($message);
+        }
+        elseif(empty($results['records'])) {
+          $done = TRUE;
+        }
+        else {
+          $recordList = array_merge($recordList, $results['records']);
+          $done = $results['done'];
+          $nextRecordsUrl = isset($results['nextRecordsUrl']) ? $results['nextRecordsUrl'] : NULL;
+        }
+      } catch (\Exception $e) {
+        $message = 'Error querying Salesforce ' . $sObject . '. Exception occurred. Using query: ' . $query . PHP_EOL;
+        $message .= $e->getMessage();
         $message .= print_r($this->pest->last_request, TRUE);
         throw new Exception($message);
       }
-      elseif(empty($results['records'])) {
-        return array();
-      }
-      else {
-        return $results['records'];
-      }
-    } catch (\Exception $e) {
-      $message = 'Error querying Salesforce ' . $sObject . '. Exception occurred. Using query: ' . $query . PHP_EOL;
-      $message .= $e->getMessage();
-      $message .= print_r($this->pest->last_request, TRUE);
-      throw new Exception($message);
-    }
-    $message = 'Error querying Salesforce ' . $sObject . '. No result. Using query: ' . $query . PHP_EOL;
-    throw new Exception($message);
+    } // endwhile
+    return $recordList;
   }
 
   public function create($sObject = '', $fields = array()) {
