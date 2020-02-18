@@ -94,12 +94,12 @@ class php_sfdc_wrapper {
           'Content-Type: application/json'
         )
       ), TRUE);
-      return $results['id'];
       if(empty($results) || empty($results['success']) || empty($results['id'])) {
         $message = "Error creating new {$sObject} in Salesforce. Invalid Result." . PHP_EOL;
         $message .= print_r($this->pest->last_request, TRUE);
         throw new Exception($message);
       }
+      return $results['id'];
     } catch (\Exception $e) {
       $message = 'Error working with Salesforce ' . $sObject . '. Exception occurred.' . PHP_EOL;
       $message .= $e->getMessage();
