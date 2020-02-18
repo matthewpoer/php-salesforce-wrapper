@@ -51,6 +51,17 @@ try {
 }
 ~~~
 
+### Delete an Account
+~~~
+try {
+  $account_id = $sfdc->delete('Account', $account_id);
+} catch (\Exception $e) {
+  $message = $e->getMessage();
+  $log->critical($message);
+  die('Error deleting Salesforce Account. Exception occurred.' . PHP_EOL);
+}
+~~~
+
 ### Find an Account by Name
 The `query` method accepts as parameters,
 1. an s0bject name

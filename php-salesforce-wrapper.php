@@ -130,6 +130,30 @@ class php_sfdc_wrapper {
     throw new Exception('Error updating Salesforce ' . $sObject . '. No result.');
   }
 
+  public function delete($sObject = '', $sObjectID = '') {
+    try {
+      $this->pest->delete(
+        '/services/data/v' . self::API_VERSION . '/sobjects/' . $sObject . '/' . $sObjectID,
+        array(
+          'Authorization: Bearer ' . $this->access_token,
+          'Content-Type: application/json'
+        )
+      );
+      if($this->pest->lastStatus() == 204) {
+        return TRUE;
+      }
+      $message = "Error deleting {$sObject} {$sObjectID} in Salesforce. Invalid Result." . PHP_EOL;
+      $message .= print_r($this->pest->last_request, TRUE);
+      throw new Exception($message);
+    } catch (\Exception $e) {
+      $message = 'Error working with Salesforce ' . $sObject . '. Exception occurred.' . PHP_EOL;
+      $message .= $e->getMessage();
+      $message .= print_r($this->pest->last_request, TRUE);
+      $message .= print_r($sObjectID, TRUE);
+      throw new Exception($message);
+    }
+  }
+
   public function getFieldsFor($sObject) {
     $return = array();
     try {
