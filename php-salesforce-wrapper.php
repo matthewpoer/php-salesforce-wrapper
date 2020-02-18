@@ -1,8 +1,8 @@
 <?php
 class php_sfdc_wrapper {
 
-  private $pest = NULL;
-  private $access_token = NULL;
+  protected $pest = NULL;
+  protected $access_token = NULL;
   const API_VERSION = '43.0';
 
   // invocation is authentication
