@@ -7,7 +7,7 @@ Thanks @Educoder!
 
 ## Composer Install
 
-```
+```sh
 composer require matthewpoer/php-salesforce-wrapper:dev-master
 ```
 
@@ -15,7 +15,7 @@ composer require matthewpoer/php-salesforce-wrapper:dev-master
 
 ### Authentication
 Authentication with Salesforce occurs upon instantiation of the wrapper.
-~~~
+```php
 try {
   $sfdc = new php_sfdc_wrapper(
     SFDC_BASE_URL,
@@ -31,10 +31,10 @@ try {
   ));
   die('Error authenticating with Salesforce. Exception occurred.' . PHP_EOL);
 }
-~~~
+```
 
 ### Create an Account
-~~~
+```php
 try {
   $account_id = $sfdc->create('Account', array(
     'BillingCity' => 'San Francisco',
@@ -49,10 +49,10 @@ try {
   $log->critical($message);
   die('Error creating Salesforce Account. Exception occurred.' . PHP_EOL);
 }
-~~~
+```
 
 ### Delete an Account
-~~~
+```php
 try {
   $account_id = $sfdc->delete('Account', $account_id);
 } catch (\Exception $e) {
@@ -60,7 +60,7 @@ try {
   $log->critical($message);
   die('Error deleting Salesforce Account. Exception occurred.' . PHP_EOL);
 }
-~~~
+```
 
 ### Find an Account by Name
 The `query` method accepts as parameters,
@@ -69,7 +69,7 @@ The `query` method accepts as parameters,
 3. an string to use as the SOQL query's `WHERE` clause
 4. a boolean on whether or not a result should be required (default TRUE). If this is TRUE then the wrapper will throw an exception when no records are found matching the conditions in the `WHERE` clause.
 
-~~~
+```php
 try {
   $accounts = $sfdc->query(
     'Account',
@@ -85,4 +85,4 @@ try {
   $log->critical($message);
   die('Error querying for the Salesforce Account. Exception occurred.' . PHP_EOL);
 }
-~~~
+```
